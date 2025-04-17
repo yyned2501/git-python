@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12, 3.13] # 定义多个 Python 版本
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -22,10 +26,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
+      - name: Build Docker image for Python ${{ matrix.python-version }}
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/git-python:latest .
+          docker build --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/git-python:${{ matrix.python-version }} .
 
-      - name: Push Docker image
+      - name: Push Docker image for Python ${{ matrix.python-version }}
         run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/git-python:${{ matrix.python-version }}
+
+      - name: Tag and Push latest
+        if: matrix.python-version == '3.13'
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/git-python:3.13 ${{ secrets.DOCKER_USERNAME }}/git-python:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/git-python:latest
