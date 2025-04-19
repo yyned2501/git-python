@@ -1,13 +1,10 @@
 #!/bin/bash
 
 gitpull() {
-	echo "拉取仓库"
+    echo "拉取仓库"
     git reset --hard origin/"$GIT_BRANCH"
     git pull origin "$GIT_BRANCH"
 }
-
-echo "切换到/app"
-cd /app
 
 if [ -n "$GIT_REMOTE" ]; then
     if [ -z "$GIT_BRANCH" ]; then
@@ -16,8 +13,8 @@ if [ -n "$GIT_REMOTE" ]; then
     fi
     # 检查是否是一个 Git 仓库
     if [ ! -d ".git" ]; then
-    	echo "初始化git"
-    	git config --global --add safe.directory /app
+        echo "初始化git"
+        git config --global --add safe.directory /app
         git init
         git remote add origin "$GIT_REMOTE"
         git fetch origin >/dev/null
@@ -27,13 +24,14 @@ if [ -n "$GIT_REMOTE" ]; then
 fi
 
 echo "更新pip"
-pip install --upgrade pip -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com >/dev/null 2>&1
-pip install supervisor -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com >/dev/null 2>&1
+pip install pip -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com --upgrade >/dev/null 2>&1
+echo "安装supervisor"
+pip install supervisor -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com --upgrade >/dev/null 2>&1
 
 if [ -f "requirements.txt" ]; then
     echo "安装requirements.txt"
     pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com --upgrade >/dev/null 2>&1
 fi
 
-
+echo "启动 supervisord"
 supervisord -c supervisord.conf -n
