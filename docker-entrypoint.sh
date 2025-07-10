@@ -24,7 +24,8 @@ if [ -n "$GIT_REMOTE" ]; then
 fi
 if [ -f "packages.txt" ]; then
     echo "安装apt依赖"
-    xargs -a packages.txt sudo apt-get install >/dev/null 2>&1
+    apt update >/dev/null
+    xargs -a packages.txt apt-get install -y >/dev/null 2>&1
 fi
 echo "更新pip"
 pip install pip -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com --upgrade >/dev/null 2>&1
