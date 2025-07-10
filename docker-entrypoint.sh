@@ -22,7 +22,10 @@ if [ -n "$GIT_REMOTE" ]; then
     echo "尝试更新git仓库"
     gitpull
 fi
-
+if [ -f "packages.txt" ]; then
+    echo "安装apt依赖"
+    xargs -a packages.txt sudo apt-get install >/dev/null 2>&1
+fi
 echo "更新pip"
 pip install pip -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com --upgrade >/dev/null 2>&1
 echo "安装supervisor"
