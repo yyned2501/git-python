@@ -26,6 +26,9 @@ if [ -f "packages.txt" ]; then
     echo "安装apt依赖"
     apt-get update >/dev/null
     xargs -a packages.txt apt-get update && apt-get install -y --no-install-recommends >/dev/null 2>&1
+    fc-cache -f -v
+    apt-get clean
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 fi
 echo "更新pip"
 pip install pip -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com --upgrade >/dev/null 2>&1
